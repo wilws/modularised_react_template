@@ -40,12 +40,15 @@ export const langLocaleMap: Record<LangKey, string> = {
 
 export const LANG_STORAGE_KEY = "app.langKey";
 
+/** Shown to a first-time visitor whose browser language we do not ship. */
+export const DEFAULT_LANG: LangKey = "JP";
+
 export const isLangKey = (value: unknown): value is LangKey =>
   typeof value === "string" && value in langKeyList;
 
 /** Restore the last choice, else fall back to the browser language, else EN. */
 export const resolveInitialLang = (): LangKey => {
-  if (typeof window === "undefined") return "EN";
+  if (typeof window === "undefined") return DEFAULT_LANG;
 
   try {
     const stored = window.localStorage.getItem(LANG_STORAGE_KEY);
@@ -63,7 +66,8 @@ export const resolveInitialLang = (): LangKey => {
   if (browser.startsWith("zh")) {
     return /hant|tw|hk|mo/.test(browser) ? "ZH" : "CN";
   }
-  return "EN";
+  if (browser.startsWith("en")) return "EN";
+  return DEFAULT_LANG;
 };
 
 /* --- Context shape --- */

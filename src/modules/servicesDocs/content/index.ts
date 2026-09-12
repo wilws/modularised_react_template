@@ -3,17 +3,16 @@ import type { DocEntry } from "../../../app/components";
 export const servicesDocs: DocEntry[] = [
   {
     slug: "",
-    title: "The services folder",
+    title: "svc.overview.title",
     path: "src/services/",
-    intro:
-      "Every conversation with the outside world. The app and its modules render — they never fetch, and never validate.",
+    intro: "svc.overview.intro",
     blocks: [
       {
-        heading: "Why it exists",
-        body: "Fetching inside a component mixes three concerns: what to render, how to get data, and whether that data is trustworthy. Moving the last two here leaves views doing one job.",
+        heading: "svc.overview.b1.heading",
+        body: "svc.overview.b1.body",
       },
       {
-        heading: "Layout",
+        heading: "svc.overview.b2.heading",
         code: `services/api/
 ├── user/
 │   ├── index.ts     the fetch calls
@@ -21,21 +20,16 @@ export const servicesDocs: DocEntry[] = [
 │   └── types.ts     types inferred FROM the schemas
 └── index.ts         groups resources into \`api\``,
       },
-      {
-        heading: "No framework",
-        body: "There is no shared client, no wrapper, no base payload. A resource is a plain file of async functions calling fetch — so a third-party endpoint just uses its own URL, and one that needs no token simply doesn't send one.",
-      },
     ],
   },
   {
     slug: "validation",
-    title: "Validation",
+    title: "svc.validation.title",
     path: "src/services/api/<resource>/schema.ts",
-    intro:
-      "Every call validates twice: the payload before sending, the response before returning. That is what lets components skip checking entirely.",
+    intro: "svc.validation.intro",
     blocks: [
       {
-        heading: "Both ends guarded",
+        heading: "svc.validation.b1.heading",
         code: `export const viewProfile = async (payload: { userId: string }) => {
   const { userId } = UserSchemas.viewProfile.parse(payload);   // 1. request
 
@@ -46,25 +40,24 @@ export const servicesDocs: DocEntry[] = [
 };`,
       },
       {
-        heading: "The guarantee",
-        body: "A resolved promise means the data matched the schema. A view renders profile.email with no null check, no cast, and no defensive optional chaining.",
+        heading: "svc.validation.b2.heading",
+        body: "svc.validation.b2.body",
       },
       {
-        heading: "Types are inferred",
-        body: "Types come from the schemas, never hand-written — so changing a schema is a compile error at every call site that no longer fits.",
+        heading: "svc.validation.b3.heading",
+        body: "svc.validation.b3.body",
         code: `export type IProfile = z.infer<typeof UserResponseSchemas.profile>;`,
       },
     ],
   },
   {
     slug: "calling",
-    title: "Calling a service",
+    title: "svc.calling.title",
     path: "src/services/api/index.ts",
-    intro:
-      "Resources are grouped into one api object, so a view calls api.users.xxx() and never constructs anything. What it does have to handle is failure.",
+    intro: "svc.calling.intro",
     blocks: [
       {
-        heading: "The api object",
+        heading: "svc.calling.b1.heading",
         code: `/* src/services/api/index.ts */
 import * as dogs from "./dog";
 import * as users from "./user";
@@ -75,17 +68,17 @@ export const api = {
 };`,
       },
       {
-        heading: "Three ways a call can fail",
+        heading: "svc.calling.b2.heading",
         bullets: [
-          "ZodError — the payload you sent, or the response you got, did not match the schema",
-          "Error from the service — a non-2xx response",
-          "TypeError from fetch — the network never reached the server",
+          "svc.calling.b2.bullet1",
+          "svc.calling.b2.bullet2",
+          "svc.calling.b2.bullet3",
         ],
-        body: "A ZodError on the response means the backend changed shape. That is a different problem from a 500, and worth separating: one is a bug to report, the other is something the user can retry.",
+        body: "svc.calling.b2.body",
       },
       {
-        heading: "Handling them properly",
-        body: "Zod ships a type guard, so a schema failure is distinguishable without parsing error strings. `z.prettifyError` turns the issue list into readable text.",
+        heading: "svc.calling.b3.heading",
+        body: "svc.calling.b3.body",
         code: `/* src/modules/dogDemo/views/DogDemo/index.tsx */
 import { z } from "zod";
 import { api, type Dog } from "../../../../services/api";
@@ -118,8 +111,8 @@ const load = async () => {
 };`,
       },
       {
-        heading: "Reading a ZodError",
-        body: "Each issue names the exact path that failed, which is usually enough to see what the backend changed.",
+        heading: "svc.calling.b4.heading",
+        body: "svc.calling.b4.body",
         code: `catch (err) {
   if (err instanceof z.ZodError) {
     for (const issue of err.issues) {
@@ -130,8 +123,8 @@ const load = async () => {
 }`,
       },
       {
-        heading: "Field errors on a form",
-        body: "For a payload that failed validation, flatten the issues by field and show them next to the inputs instead of as one banner.",
+        heading: "svc.calling.b5.heading",
+        body: "svc.calling.b5.body",
         code: `const fieldErrors: Record<string, string> = {};
 
 if (err instanceof z.ZodError) {
@@ -148,8 +141,8 @@ if (err instanceof z.ZodError) {
 />;`,
       },
       {
-        heading: "Or validate before calling",
-        body: "The schemas are exported, so a form can check a payload with safeParse and never reach the network with something it knows is invalid.",
+        heading: "svc.calling.b6.heading",
+        body: "svc.calling.b6.body",
         code: `import { DogSchemas } from "../../../../services/api/dog";
 
 const result = DogSchemas.breedImage.safeParse({ breed });
@@ -165,21 +158,20 @@ await api.dogs.breedImage(result.data);`,
   },
   {
     slug: "adding",
-    title: "Adding a resource",
+    title: "svc.adding.title",
     path: "src/services/api/<resource>/",
-    intro:
-      "Three files, then one line to register it. Below is a complete order resource, file by file.",
+    intro: "svc.adding.intro",
     blocks: [
       {
-        heading: "The folder",
+        heading: "svc.adding.b1.heading",
         code: `src/services/api/order/
 ├── schema.ts    zod request + response schemas
 ├── types.ts     types inferred FROM those schemas
 └── index.ts     the fetch calls`,
       },
       {
-        heading: "1. schema.ts — the contract",
-        body: "Request schemas validate what you send; response schemas validate what comes back. Both live here, and nothing else in the app describes this data.",
+        heading: "svc.adding.b2.heading",
+        body: "svc.adding.b2.body",
         code: `/* src/services/api/order/schema.ts */
 import { z } from "zod";
 
@@ -227,8 +219,8 @@ export const OrderResponseSchemas = {
 };`,
       },
       {
-        heading: "2. types.ts — inferred, never hand-written",
-        body: "Every type comes from a schema via z.infer. Change the schema and each call site that no longer fits fails to compile — the types cannot drift from what the API actually returns.",
+        heading: "svc.adding.b3.heading",
+        body: "svc.adding.b3.body",
         code: `/* src/services/api/order/types.ts */
 import type { z } from "zod";
 import type { OrderResponseSchemas, OrderSchemas } from "./schema";
@@ -249,8 +241,8 @@ export namespace Order {
 }`,
       },
       {
-        heading: "3. index.ts — the calls",
-        body: "Each function validates its payload, calls fetch, checks the status, then validates the response. Nothing leaves this file unvalidated.",
+        heading: "svc.adding.b4.heading",
+        body: "svc.adding.b4.body",
         code: `/* src/services/api/order/index.ts */
 import { OrderResponseSchemas, OrderSchemas } from "./schema";
 import type { Order } from "./types";
@@ -304,8 +296,8 @@ export const createOrder = async (
 };`,
       },
       {
-        heading: "4. Register it",
-        body: "One import and one key — the only edit outside the resource folder.",
+        heading: "svc.adding.b5.heading",
+        body: "svc.adding.b5.body",
         code: `/* src/services/api/index.ts */
 import * as dogs from "./dog";
 import * as orders from "./order";
@@ -320,29 +312,28 @@ export const api = {
 export type { Order } from "./order";`,
       },
       {
-        heading: "Using it",
+        heading: "svc.adding.b6.heading",
         code: `import { api } from "../../../../services/api";
 
 const { orders, total } = await api.orders.listOrders({ status: "open" });
 //      ^ fully typed, already validated — page defaults to 1`,
       },
       {
-        heading: "Third-party resources",
-        body: "Identical, with its own base URL and whatever headers that endpoint needs — or none at all. See src/services/api/dog/, which calls a public API with no auth.",
+        heading: "svc.adding.b7.heading",
+        body: "svc.adding.b7.body",
         code: `const BASE_URL = "https://dog.ceo/api";`,
       },
     ],
   },
   {
     slug: "testing",
-    title: "Testing a service",
+    title: "svc.testing.title",
     path: "src/services/api/<resource>/index.test.ts",
-    intro:
-      "Services are plain async functions, so they test without React, without a renderer and without a running app. The test sits beside the service it covers.",
+    intro: "svc.testing.intro",
     blocks: [
       {
-        heading: "Why this is the right layer to test",
-        body: "All the logic worth testing already lives here: URL building, payload validation, response validation, envelope unwrapping and error handling. A component test would re-test React; a service test covers the part that can actually be wrong.",
+        heading: "svc.testing.b1.heading",
+        body: "svc.testing.b1.body",
         code: `src/services/api/dog/
 ├── index.ts          the service
 ├── index.test.ts     ← its test, right beside it
@@ -350,13 +341,13 @@ const { orders, total } = await api.orders.listOrders({ status: "open" });
 └── types.ts`,
       },
       {
-        heading: "Running them",
+        heading: "svc.testing.b2.heading",
         code: `npm test          # run once
 npm run test:watch  # re-run on change`,
       },
       {
-        heading: "Mocking fetch",
-        body: "Stub the global and return a real Response. Nothing else needs faking, because the service takes no client and no config object.",
+        heading: "svc.testing.b3.heading",
+        body: "svc.testing.b3.body",
         code: `/* src/services/api/dog/index.test.ts */
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
@@ -387,8 +378,8 @@ it("unwraps the { message, status } envelope into a plain list", async () => {
 });`,
       },
       {
-        heading: "Test that a bad response is rejected",
-        body: "This is the test that earns the schemas. If the API starts returning a string where an array was promised, the service must throw rather than hand the wrong shape to a view.",
+        heading: "svc.testing.b4.heading",
+        body: "svc.testing.b4.body",
         code: `it("throws a ZodError when the response shape changes", async () => {
   // sub-breeds arrive as a string instead of an array
   vi.stubGlobal("fetch", vi.fn(async () =>
@@ -408,8 +399,8 @@ it("names the offending field", async () => {
 });`,
       },
       {
-        heading: "Test that a bad payload never reaches the network",
-        body: "Request validation runs before fetch, so an invalid payload should fail without a call being made. Asserting the spy was never called is what proves it.",
+        heading: "svc.testing.b5.heading",
+        body: "svc.testing.b5.body",
         code: `it("rejects an empty breed before touching the network", async () => {
   const fetchSpy = vi.fn();
   vi.stubGlobal("fetch", fetchSpy);
@@ -419,8 +410,8 @@ it("names the offending field", async () => {
 });`,
       },
       {
-        heading: "Test the request itself",
-        body: "For writes, assert the method, the URL and the body — including what is deliberately left out. updateProfile takes a userId but must send it in the path, not the payload.",
+        heading: "svc.testing.b6.heading",
+        body: "svc.testing.b6.body",
         code: `it("sends only the changed fields, not the id", async () => {
   const fetchSpy = vi.fn<typeof fetch>(async () => jsonResponse(profile));
   vi.stubGlobal("fetch", fetchSpy);
@@ -434,19 +425,19 @@ it("names the offending field", async () => {
 });`,
       },
       {
-        heading: "What to cover for each call",
+        heading: "svc.testing.b7.heading",
         bullets: [
-          "the happy path — data comes back in the shape the view expects",
-          "the URL that was requested, and the body that was sent",
-          "an invalid payload rejects, and fetch is never called",
-          "a malformed response throws a ZodError instead of leaking",
-          "a non-2xx response throws with its status code",
-          "a network failure propagates rather than resolving empty",
+          "svc.testing.b7.bullet1",
+          "svc.testing.b7.bullet2",
+          "svc.testing.b7.bullet3",
+          "svc.testing.b7.bullet4",
+          "svc.testing.b7.bullet5",
+          "svc.testing.b7.bullet6",
         ],
       },
       {
-        heading: "Integration testing",
-        body: "Because a service is just a function, the same test file can run against the real API instead of a mock — drop the stub and call it directly. That turns the suite into a contract check: it fails when the backend changes shape, which is the failure a mocked test can never catch. Keep those in a separate file or behind a flag, so the everyday suite stays offline and fast.",
+        heading: "svc.testing.b8.heading",
+        body: "svc.testing.b8.body",
         code: `// no vi.stubGlobal — this hits the real dog.ceo API
 it("returns a list of real breeds", async () => {
   const breeds = await listBreeds();

@@ -1,5 +1,6 @@
 export { CodeBlock } from "./CodeBlock";
 export { DocPage } from "./DocPage";
+export { translateEntry } from "./DocPage/translateEntry";
 export type { DocBlock, DocEntry } from "./DocPage";
 export { DocsLayout } from "./DocsLayout";
 export type { DocsSection } from "./DocsLayout";

@@ -3,46 +3,44 @@ import type { DocEntry } from "../../../app/components";
 export const modulesDocs: DocEntry[] = [
   {
     slug: "",
-    title: "The modules folder",
+    title: "mod.overview.title",
     path: "src/modules/",
-    intro:
-      "One folder per page. A module is self-contained: it owns its views, its private components, its translations and its styles — and exposes nothing but routes.",
+    intro: "mod.overview.intro",
     blocks: [
       {
-        heading: "Anatomy",
+        heading: "mod.overview.b1.heading",
         bullets: [
-          "router/ — the module's ONLY public surface",
-          "views/ — page-level components",
-          "components/ — components private to this module",
-          "hooks/ — custom hooks private to this module",
-          "locales/ — strings private to this module",
-          "content/ — static data the views render",
+          "mod.overview.b1.bullet1",
+          "mod.overview.b1.bullet2",
+          "mod.overview.b1.bullet3",
+          "mod.overview.b1.bullet4",
+          "mod.overview.b1.bullet5",
+          "mod.overview.b1.bullet6",
         ],
       },
       {
-        heading: "The three rules",
+        heading: "mod.overview.b2.heading",
         bullets: [
-          "A module owns its views, components, locales and styles.",
-          "A module exposes routes only — it never imports app internals beyond shared helpers.",
-          "Modules never import each other; they navigate by path.",
+          "mod.overview.b2.bullet1",
+          "mod.overview.b2.bullet2",
+          "mod.overview.b2.bullet3",
         ],
-        body: "The third rule is what keeps the app from turning into a graph. To reach another page, link to its path — never import its code.",
+        body: "mod.overview.b2.body",
       },
       {
-        heading: "This site is the proof",
-        body: "The page you are reading is a module. So is the home page, and each docs section. None of them import each other.",
+        heading: "mod.overview.b3.heading",
+        body: "mod.overview.b3.body",
       },
     ],
   },
   {
     slug: "router",
-    title: "router",
+    title: "mod.router.title",
     path: "src/modules/<name>/router/index.tsx",
-    intro:
-      "A module's entire public surface: an array of RouteObject. Nothing else leaves the folder.",
+    intro: "mod.router.intro",
     blocks: [
       {
-        heading: "The simplest module",
+        heading: "mod.router.b1.heading",
         code: `import type { RouteObject } from "react-router-dom";
 import { Home } from "../views";
 
@@ -51,8 +49,8 @@ export const homeRoutes: RouteObject[] = [
 ];`,
       },
       {
-        heading: "A module with sub-pages",
-        body: "Nest children under a layout element to get a section with its own inner navigation — exactly what these docs pages do.",
+        heading: "mod.router.b2.heading",
+        body: "mod.router.b2.body",
         code: `export const appDocsRoutes: RouteObject[] = [
   {
     path: "app",
@@ -68,22 +66,21 @@ export const homeRoutes: RouteObject[] = [
   },
   {
     slug: "views",
-    title: "views",
+    title: "mod.views.title",
     path: "src/modules/<name>/views/",
-    intro:
-      "Page-level components — what a route actually renders. Views compose primitives from Basic and read strings from the module's locale.",
+    intro: "mod.views.intro",
     blocks: [
       {
-        heading: "What a view may import",
+        heading: "mod.views.b1.heading",
         bullets: [
-          "app/components/Basic — UI primitives",
-          "app/locales — the translation hooks",
-          "its own module's components, locales and content",
+          "mod.views.b1.bullet1",
+          "mod.views.b1.bullet2",
+          "mod.views.b1.bullet3",
         ],
-        body: "A view never fetches, never validates, and never reaches into another module.",
+        body: "mod.views.b1.body",
       },
       {
-        heading: "Shape",
+        heading: "mod.views.b2.heading",
         code: `export const Home = () => {
   const { t } = useModuleTranslation(homeLocale);
 
@@ -99,13 +96,12 @@ export const homeRoutes: RouteObject[] = [
   },
   {
     slug: "locales",
-    title: "locales",
+    title: "mod.locales.title",
     path: "src/modules/<name>/locales/index.ts",
-    intro:
-      "Strings the module owns. They are never registered with the app — the module passes its own bundle to the hook.",
+    intro: "mod.locales.intro",
     blocks: [
       {
-        heading: "Self-contained translations",
+        heading: "mod.locales.b1.heading",
         code: `export const homeLocale = defineLocale({
   EN: { "home.hero.title": "Modularised React Template" },
   JP: { "home.hero.title": "モジュール型 React テンプレート" },
@@ -113,7 +109,7 @@ export const homeRoutes: RouteObject[] = [
 });`,
       },
       {
-        heading: "Used only inside the module",
+        heading: "mod.locales.b2.heading",
         code: `const { t } = useModuleTranslation(homeLocale);
 t("home.hero.title");`,
       },
@@ -121,22 +117,21 @@ t("home.hero.title");`,
   },
   {
     slug: "hooks",
-    title: "hooks",
+    title: "mod.hooks.title",
     path: "src/modules/<name>/hooks/",
-    intro:
-      "Custom hooks belonging to one module. Anything stateful a view repeats — a form, a filter, a data load — becomes a hook here rather than a global one.",
+    intro: "mod.hooks.intro",
     blocks: [
       {
-        heading: "Why module-scoped",
-        body: "A hook that only this feature calls has no reason to be globally shareable. Keeping it beside its caller means it is deleted with the feature, and changing it can only affect this module.",
+        heading: "mod.hooks.b1.heading",
+        body: "mod.hooks.b1.body",
         code: `src/modules/dogDemo/
 ├── views/DogDemo/        the page
 ├── components/BreedList/ private components
 └── hooks/useBreeds.ts    ← private hook, used only here`,
       },
       {
-        heading: "Example",
-        body: "The demo view holds loading and error state inline. Pulling it into a module hook leaves the view with nothing but rendering.",
+        heading: "mod.hooks.b2.heading",
+        body: "mod.hooks.b2.body",
         code: `/* src/modules/dogDemo/hooks/useBreeds.ts */
 import { useState } from "react";
 import { api, type Dog } from "../../../services/api";
@@ -162,7 +157,7 @@ export const useBreeds = () => {
 };`,
       },
       {
-        heading: "The view becomes trivial",
+        heading: "mod.hooks.b3.heading",
         code: `const { breeds, loading, error, load } = useBreeds();
 
 <Button onClick={load} loading={loading}>{t("dog.button")}</Button>
@@ -170,23 +165,23 @@ export const useBreeds = () => {
 {breeds.length > 0 && <BreedList breeds={breeds} />}`,
       },
       {
-        heading: "When to promote it to app/hooks",
-        body: "Only when an unrelated module needs the same hook. A generic useAsync belongs in app/hooks; useBreeds never will.",
+        heading: "mod.hooks.b4.heading",
+        body: "mod.hooks.b4.body",
       },
     ],
   },
   {
     slug: "adding",
-    title: "Adding a page",
+    title: "mod.adding.title",
     path: "src/modules/<name>/",
-    intro: "Three steps. Only the third touches anything outside the module.",
+    intro: "mod.adding.intro",
     blocks: [
       {
-        heading: "1. Create the folder",
+        heading: "mod.adding.b1.heading",
         code: `mkdir -p src/modules/about/{router,views/About,locales}`,
       },
       {
-        heading: "2. Export its routes",
+        heading: "mod.adding.b2.heading",
         code: `// src/modules/about/router/index.tsx
 import type { RouteObject } from "react-router-dom";
 import { About } from "../views";
@@ -196,8 +191,8 @@ export const aboutRoutes: RouteObject[] = [
 ];`,
       },
       {
-        heading: "3. Register it",
-        body: "One line in the app router — the only app-side change. Add a nav item in Header if it needs a link.",
+        heading: "mod.adding.b3.heading",
+        body: "mod.adding.b3.body",
         code: `import { aboutRoutes } from "../../modules/about/router";
 
 const moduleRoutes = [...homeRoutes, ...aboutRoutes];`,

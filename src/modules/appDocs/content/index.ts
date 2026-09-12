@@ -5,25 +5,24 @@ import type { DocEntry } from "../../../app/components";
 export const appDocs: DocEntry[] = [
   {
     slug: "",
-    title: "The app folder",
+    title: "app.overview.title",
     path: "src/app/",
-    intro:
-      "The core. It owns the shell every page renders inside, the router, and the cross-cutting providers. It knows about exactly one thing from the outside: each module's routes.",
+    intro: "app.overview.intro",
     blocks: [
       {
-        heading: "What lives here",
+        heading: "app.overview.b1.heading",
         bullets: [
-          "components/ — shared chrome plus Basic/, the UI primitive funnel",
-          "hooks/ — custom hooks shared across the whole app",
-          "locales/ — the translation engine and app-level strings",
-          "providers/ — cross-cutting context",
-          "router/ — the single place modules connect to the app",
-          "config.ts — app-wide constants",
+          "app.overview.b1.bullet1",
+          "app.overview.b1.bullet2",
+          "app.overview.b1.bullet3",
+          "app.overview.b1.bullet4",
+          "app.overview.b1.bullet5",
+          "app.overview.b1.bullet6",
         ],
       },
       {
-        heading: "app never imports from a module",
-        body: "This is the rule that makes the core reusable. Nothing in app/ may import from modules/ — with exactly one exception, the router, which imports each module's routes and nothing else. If the core reached into a module, the module could no longer be deleted, moved or reused, and the dependency would run in both directions.",
+        heading: "app.overview.b2.heading",
+        body: "app.overview.b2.body",
         code: `// ✅ app/router/index.tsx — the one allowed import
 import { homeRoutes } from "../../modules/home/router";
 
@@ -32,8 +31,8 @@ import { HomeHero } from "../../modules/home/views/Home";
 import { dogLocale } from "../../modules/dogDemo/locales";`,
       },
       {
-        heading: "The one seam",
-        body: "src/app/router/index.tsx is the only file in app/ that imports from modules/. Everything else in the core is module-agnostic.",
+        heading: "app.overview.b3.heading",
+        body: "app.overview.b3.body",
         code: `import { homeRoutes } from "../../modules/home/router";
 
 const moduleRoutes: RouteObject[] = [
@@ -45,14 +44,13 @@ const moduleRoutes: RouteObject[] = [
   },
   {
     slug: "router",
-    title: "router",
+    title: "app.router.title",
     path: "src/app/router/index.tsx",
-    intro:
-      "The only wire between the app and its modules. Each module exports a RouteObject[]; the router spreads them into the shell.",
+    intro: "app.router.intro",
     blocks: [
       {
-        heading: "How it works",
-        body: "MainLayout is the element for the root route, so every module route renders inside the same chrome. ErrorPage catches both 404s and anything a route throws.",
+        heading: "app.router.b1.heading",
+        body: "app.router.b1.body",
         code: `const router = createBrowserRouter([
   {
     path: "/",
@@ -66,8 +64,8 @@ const moduleRoutes: RouteObject[] = [
 ]);`,
       },
       {
-        heading: "Adding a module",
-        body: "The module exports its routes; the app router spreads them in. Those two files are the entire registration.",
+        heading: "app.router.b2.heading",
+        body: "app.router.b2.body",
         code: `/* 1. the module declares its own routes */
 // src/modules/order/router/index.tsx
 import type { RouteObject } from "react-router-dom";
@@ -88,8 +86,8 @@ const moduleRoutes: RouteObject[] = [
 ];`,
       },
       {
-        heading: "Where the data comes from",
-        body: "A module never fetches. If the new page needs a backend, add a resource under services/api/ and call it from the view — see the services pages for the schema, types and calling pattern.",
+        heading: "app.router.b3.heading",
+        body: "app.router.b3.body",
         code: `// in the view
 import { api } from "../../../../services/api";
 
@@ -99,16 +97,15 @@ const orders = await api.orders.listOrders();`,
   },
   {
     slug: "locales",
-    title: "locales",
+    title: "app.locales.title",
     path: "src/app/locales/",
-    intro:
-      "A typed translation layer in eight languages. A missing translation is a compile error, never a silent fallback to English.",
+    intro: "app.locales.intro",
     blocks: [
       {
-        heading: "Two scopes",
+        heading: "app.locales.b1.heading",
         bullets: [
-          "useTranslation() — app chrome (header, footer, errors)",
-          "useModuleTranslation(bundle) — strings a module owns",
+          "app.locales.b1.bullet1",
+          "app.locales.b1.bullet2",
         ],
         code: `const { t } = useTranslation();
 t("nav.home");
@@ -117,8 +114,8 @@ const { t } = useModuleTranslation(homeLocale);
 t("home.counter.value", { count: 42 });`,
       },
       {
-        heading: "Why it cannot drift",
-        body: "defineLocale requires every language key. Add a language to langKeyList and TypeScript errors on every bundle until it is filled in.",
+        heading: "app.locales.b2.heading",
+        body: "app.locales.b2.body",
         code: `export const homeLocale = defineLocale({
   EN: { "home.title": "Hello" },
   JP: { "home.title": "こんにちは" },
@@ -126,22 +123,21 @@ t("home.counter.value", { count: 42 });`,
 });`,
       },
       {
-        heading: "Formatting",
-        body: "useFormatters() gives locale-aware number and date formatting via Intl, so modules never hardcode a format.",
+        heading: "app.locales.b3.heading",
+        body: "app.locales.b3.body",
         code: `const { formatNumber, formatDate } = useFormatters();`,
       },
     ],
   },
   {
     slug: "providers",
-    title: "providers",
+    title: "app.providers.title",
     path: "src/app/providers/",
-    intro:
-      "Cross-cutting React context — anything more than one part of the app needs to read. The language provider is one example, not the only kind.",
+    intro: "app.providers.intro",
     blocks: [
       {
-        heading: "The pyramid you do not have to build",
-        body: "The usual result of app-wide context is a stack of wrappers around the whole tree. Every provider pays its cost everywhere, even on pages that never read it — and a re-render at the top re-renders everything below.",
+        heading: "app.providers.b1.heading",
+        body: "app.providers.b1.body",
         code: `/* ❌ the shape this template avoids */
 <ThemeProvider>
   <AuthProvider>
@@ -156,8 +152,8 @@ t("home.counter.value", { count: 42 });`,
 </ThemeProvider>`,
       },
       {
-        heading: "Wrap only where it is needed",
-        body: "Because routes are plain objects, a provider can wrap a single route, a section, or one component. Only that subtree pays for it, and its state unmounts when you navigate away.",
+        heading: "app.providers.b2.heading",
+        body: "app.providers.b2.body",
         code: `/* ✅ scope it to one section, in the module's own router */
 export const checkoutRoutes: RouteObject[] = [
   {
@@ -180,8 +176,8 @@ export const checkoutRoutes: RouteObject[] = [
 </SocketProvider>`,
       },
       {
-        heading: "What belongs at the root",
-        body: "Only context that genuinely every page reads — the UI theme and the language. Everything else lives closer to its use.",
+        heading: "app.providers.b3.heading",
+        body: "app.providers.b3.body",
         code: `// src/app/App.tsx — deliberately shallow
 <MantineProvider>
   <LangProvider>
@@ -190,8 +186,8 @@ export const checkoutRoutes: RouteObject[] = [
 </MantineProvider>`,
       },
       {
-        heading: "Example: an Auth provider",
-        body: "Three files, matching how the language provider is split — a file that exports a component must export only components, or fast refresh breaks.",
+        heading: "app.providers.b4.heading",
+        body: "app.providers.b4.body",
         code: `/* src/app/providers/auth/types.ts */
 export interface AuthUser {
   id: string;
@@ -241,8 +237,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };`,
       },
       {
-        heading: "Then wrap only the routes that need it",
-        body: "Public pages stay outside it, so they never mount the provider at all.",
+        heading: "app.providers.b5.heading",
+        body: "app.providers.b5.body",
         code: `export const accountRoutes: RouteObject[] = [
   {
     path: "account",
@@ -259,42 +255,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 const { user, signOut } = useAuth();`,
       },
       {
-        heading: "Why the language provider is split in three",
+        heading: "app.providers.b6.heading",
         bullets: [
-          "types.ts — language list, flags, BCP-47 tags, detection",
-          "langContext.ts — the context and its hook",
-          "LangProvider.tsx — the component",
+          "app.providers.b6.bullet1",
+          "app.providers.b6.bullet2",
+          "app.providers.b6.bullet3",
         ],
-        body: "Splitting these keeps fast refresh working, and it is the pattern any new provider should follow.",
+        body: "app.providers.b6.body",
       },
     ],
   },
   {
     slug: "components",
-    title: "components",
+    title: "app.components.title",
     path: "src/app/components/",
-    intro:
-      "Two different things live here, and the distinction matters: Basic/ is the UI primitive funnel, and everything beside it is shared chrome. Use the menu to read each one.",
+    intro: "app.components.intro",
     blocks: [
       {
-        heading: "Basic/ — the primitives",
-        body: "Buttons, headings, text, inputs. Every primitive in the app comes from this one folder, so the UI library can be swapped, themed or patched in a single file.",
+        heading: "app.components.b1.heading",
+        body: "app.components.b1.body",
       },
       {
-        heading: "components/ — the shared chrome",
-        body: "Header, Footer, MainLayout, ErrorPage, DocPage. Components that genuinely appear across modules. The bar for putting something here is high — most components belong to a module instead.",
+        heading: "app.components.b2.heading",
+        body: "app.components.b2.body",
       },
     ],
   },
   {
     slug: "components/basic",
-    title: "Basic — UI primitives",
+    title: "app.components/basic.title",
     path: "src/app/components/Basic/index.tsx",
-    intro:
-      "One file re-exports the UI library. No file outside this folder imports that library directly, and none writes a raw button, h1 or p.",
+    intro: "app.components/basic.intro",
     blocks: [
       {
-        heading: "The rule",
+        heading: "app.components/basic.b1.heading",
         code: `// ✅ app chrome
 import { Button, Title, Text } from "../Basic";
 
@@ -307,30 +301,30 @@ import { Button } from "@mantine/core";
 <h1>Title</h1>`,
       },
       {
-        heading: "Why funnel everything",
-        body: "The library becomes an implementation detail. This template already swapped its UI library once — Semantic UI to Mantine — and the change touched one line, because nothing else ever named the library.",
+        heading: "app.components/basic.b2.heading",
+        body: "app.components/basic.b2.body",
       },
       {
-        heading: "The primitive for each HTML tag",
+        heading: "app.components/basic.b3.heading",
         bullets: [
-          "<button> → Button, ActionIcon, UnstyledButton",
-          "<h1>–<h6> → Title with order={1..6}",
-          "<p>, <span> → Text",
-          "<a> → Anchor (routing: component={Link})",
-          "<div> → Box, Stack, Group, Paper",
-          "<ul>, <ol> → List + List.Item",
-          "<input>, <select> → TextInput, Select, Checkbox",
+          "app.components/basic.b3.bullet1",
+          "app.components/basic.b3.bullet2",
+          "app.components/basic.b3.bullet3",
+          "app.components/basic.b3.bullet4",
+          "app.components/basic.b3.bullet5",
+          "app.components/basic.b3.bullet6",
+          "app.components/basic.b3.bullet7",
         ],
       },
       {
-        heading: "Overriding a primitive",
-        body: "Write your own and re-export it after the wildcard so it wins. Every existing import then resolves to your version, with no call site touched.",
+        heading: "app.components/basic.b4.heading",
+        body: "app.components/basic.b4.body",
         code: `// src/app/components/Basic/index.tsx
 export * from "@mantine/core";                 // everything
 export { MyButton as Button } from "./Button"; // …except Button`,
       },
       {
-        heading: "Checking compliance",
+        heading: "app.components/basic.b5.heading",
         code: `# raw HTML primitives outside Basic
 grep -rnE "<(button|h1|h2|h3|p|a|input)[ >/]" src --include="*.tsx" \\
   | grep -v "components/Basic"
@@ -342,34 +336,33 @@ grep -rn 'from "@mantine' src --include="*.tsx" | grep -v "components/Basic"`,
   },
   {
     slug: "components/component",
-    title: "Components — shared vs module",
+    title: "app.components/component.title",
     path: "src/app/components/",
-    intro:
-      "The question is never \"is this a component?\" but \"who owns it?\". Most components belong to one module. Only genuinely cross-cutting chrome belongs here.",
+    intro: "app.components/component.intro",
     blocks: [
       {
-        heading: "Why not put every component in one global folder",
-        body: "The traditional shared components/ folder collects everything, including components used once in one corner of one page. It grows into hundreds of files nobody can safely change, because any of them might be used anywhere. Nobody wants to maintain that folder, and nobody dares delete from it.",
+        heading: "app.components/component.b1.heading",
+        body: "app.components/component.b1.body",
       },
       {
-        heading: "Most components are modular",
-        body: "A component used a few times inside one feature has no reason to be globally shareable. Keeping it in the module means it lives beside its only caller, it is deleted when the feature is deleted, and changing it can only affect that one module.",
+        heading: "app.components/component.b2.heading",
+        body: "app.components/component.b2.body",
         code: `src/modules/dogDemo/
 ├── views/DogDemo/          the page
 └── components/BreedList/   ← used only by this page, so it lives here`,
       },
       {
-        heading: "Where a component belongs",
+        heading: "app.components/component.b3.heading",
         bullets: [
-          "Used by one module → src/modules/<name>/components/",
-          "Used by two modules → keep two copies, or ask whether it is really the same component",
-          "Used by the shell itself (Header, Footer, layouts) → src/app/components/",
-          "A UI primitive wrapping the library → src/app/components/Basic/",
+          "app.components/component.b3.bullet1",
+          "app.components/component.b3.bullet2",
+          "app.components/component.b3.bullet3",
+          "app.components/component.b3.bullet4",
         ],
-        body: "Duplication across two modules is cheaper than a wrong shared abstraction. Promote a component only when a third caller proves the shape is stable.",
+        body: "app.components/component.b3.body",
       },
       {
-        heading: "What shared chrome looks like",
+        heading: "app.components/component.b4.heading",
         code: `src/app/components/
 ├── Basic/            UI primitives (the funnel)
 ├── Header/           app-wide navigation
@@ -381,30 +374,29 @@ grep -rn 'from "@mantine' src --include="*.tsx" | grep -v "components/Basic"`,
 └── ErrorPage/        404 + thrown errors`,
       },
       {
-        heading: "The test before adding one here",
-        body: "Would at least two unrelated modules break if this component disappeared? If not, it belongs to the module that uses it.",
+        heading: "app.components/component.b5.heading",
+        body: "app.components/component.b5.body",
       },
     ],
   },
   {
     slug: "hooks",
-    title: "hooks",
+    title: "app.hooks.title",
     path: "src/app/hooks/",
-    intro:
-      "Custom hooks shared across the whole app. The same ownership rule as components applies: a hook used by one module belongs to that module, not here.",
+    intro: "app.hooks.intro",
     blocks: [
       {
-        heading: "What belongs here",
+        heading: "app.hooks.b1.heading",
         bullets: [
-          "Hooks the shell itself uses (route tracking, layout measurements)",
-          "Hooks genuinely used by unrelated modules",
-          "Wrappers around app-wide context that are not the provider's own hook",
+          "app.hooks.b1.bullet1",
+          "app.hooks.b1.bullet2",
+          "app.hooks.b1.bullet3",
         ],
-        body: "A hook that only one module calls belongs in src/modules/<name>/hooks/ instead.",
+        body: "app.hooks.b1.body",
       },
       {
-        heading: "Example: useAsync",
-        body: "Every data-backed view repeats the same loading/error/try-catch block. One hook removes it, and it is a fair candidate for app/hooks because any module may need it.",
+        heading: "app.hooks.b2.heading",
+        body: "app.hooks.b2.body",
         code: `/* src/app/hooks/useAsync.ts */
 import { useCallback, useState } from "react";
 
@@ -434,8 +426,8 @@ export const useAsync = <T,>(task: () => Promise<T>) => {
 };`,
       },
       {
-        heading: "Using it in a view",
-        body: "This module's useBreeds is built on it — the generic half was promoted to app/hooks, the feature-specific half stayed in the module.",
+        heading: "app.hooks.b3.heading",
+        body: "app.hooks.b3.body",
         code: `/* src/modules/dogDemo/hooks/useBreeds.ts */
 const { data, loading, error, run } = useAsync(task);
 
@@ -449,8 +441,8 @@ return {
 };`,
       },
       {
-        heading: "Naming",
-        body: "One hook per file, named after the hook, re-exported from src/app/hooks/index.ts — the same shape as components.",
+        heading: "app.hooks.b4.heading",
+        body: "app.hooks.b4.body",
         code: `src/app/hooks/
 ├── useAsync.ts
 ├── usePageview.ts

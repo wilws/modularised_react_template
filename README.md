@@ -250,7 +250,10 @@ Eight languages ship, each with a flag in the switcher:
 | 🇬🇧 `EN` English | 🇯🇵 `JP` 日本語 | 🇭🇰 `ZH` 繁體中文 | 🇨🇳 `CN` 简体中文 |
 | 🇰🇷 `KR` 한국어 | 🇩🇪 `DE` Deutsch | 🇫🇷 `FR` Français | 🇵🇱 `PL` Polski |
 
-The active language is stored in `LangProvider`, persisted to `localStorage`, detected from the browser on first visit, and mirrored onto `<html lang>`.
+The active language is stored in `LangProvider`, persisted to `localStorage`,
+detected from the browser on first visit, and mirrored onto `<html lang>`.
+A visitor whose browser language the app does not ship gets `DEFAULT_LANG`
+(`src/app/providers/lang/types.ts`), currently **Japanese**.
 
 **App-level strings** live in `src/app/locales/app.ts`:
 
@@ -258,6 +261,11 @@ The active language is stored in `LangProvider`, persisted to `localStorage`, de
 const { t } = useTranslation();
 t("nav.home");
 ```
+
+Docs modules keep their prose in `content/index.ts` as **message ids**, which
+the view resolves through `translateEntry`, so every page translates with the
+rest of the app. Code samples are passed through untouched — they read the same
+in every language.
 
 **Module strings** live in the module and never register with the app:
 
