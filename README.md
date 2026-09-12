@@ -13,6 +13,8 @@ src/
 │   ├── locales/          translation engine + app-level strings
 │   ├── providers/        cross-cutting context (language)
 │   └── router/           ← the ONLY place modules connect to the app
+├── services/             ← ALL backend & external communication
+│   └── api/              one folder per resource, each with its own schemas
 └── modules/              one folder per page
     └── home/
         ├── router/       ← the module's ONLY public surface
@@ -26,6 +28,7 @@ src/
 3. **Modules never import each other.** To move between pages, navigate by path.
 4. `src/app/router/index.tsx` is the single seam — the only file in `app/` that imports from `modules/`.
 5. **All UI primitives come from `src/app/components/Basic`.** See below.
+6. **All external communication lives in `src/services`.** App and modules render; they never fetch. See below.
 
 ## Adding a page
 
@@ -122,6 +125,99 @@ grep -rnE "<(button|h1|h2|h3|p|a|input|select|ul|li)[ >/]" src --include="*.tsx"
 
 # direct library imports outside Basic
 grep -rn 'from "@mantine' src --include="*.tsx" --include="*.ts" | grep -v "components/Basic"
+```
+
+Both should return nothing.
+
+## Services
+
+`src/services` owns every conversation with the outside world. **App and
+modules render — they never fetch, never validate.**
+
+```
+services/api/
+├── user/                 one folder per resource
+│   ├── index.ts            the fetch calls  ← the resource's entry point
+│   ├── schema.ts           request + response zod schemas
+│   └── types.ts            types inferred FROM the schemas
+└── index.ts              groups resources into `api`
+```
+
+No shared client, no wrapper. Each resource is a plain file of `async`
+functions calling `fetch`, so a third-party endpoint just uses its own URL and
+its own headers — and one needing no token simply doesn't send one.
+
+### Calling a service
+
+```tsx
+import { api } from "../../../../services/api";
+
+useEffect(() => {
+  api.users.listUsers().then(setUsers).catch(console.error);
+}, []);
+```
+
+```ts
+api.users.viewProfile({ userId })
+api.users.updateProfile({ userId, givenName: "Ada" })
+```
+
+### Validation lives here, not in components
+
+Every call validates the payload before sending and the response before
+returning:
+
+```ts
+export const viewProfile = async (payload: { userId: string }) => {
+  const { userId } = UserSchemas.viewProfile.parse(payload);   // 1. request
+
+  const response = await fetch(`${BASE_URL}/v1/users/${userId}`);
+  if (!response.ok) throw new Error(`Failed to load profile (${response.status})`);
+
+  return UserResponseSchemas.profile.parse(await response.json());  // 2. response
+};
+```
+
+So a resolved promise is a **guarantee**: the data matched the schema. A view
+renders `profile.email` with no null check, no cast, no defensive `?.`.
+
+Types are inferred, never hand-written — change a schema and every call site
+that no longer fits fails to compile:
+
+```ts
+export type IProfile = z.infer<typeof UserResponseSchemas.profile>;
+```
+
+### Adding a resource
+
+```
+src/services/api/order/
+├── index.ts     the fetch calls
+├── schema.ts    OrderSchemas + OrderResponseSchemas
+└── types.ts     z.infer from those schemas
+```
+
+Then two lines in `src/services/api/index.ts`:
+
+```ts
+import * as orders from "./order";
+
+export const api = {
+  users,
+  orders,     // ← now api.orders.xxx()
+};
+```
+
+A third-party resource is the same, with its own base URL and headers.
+
+### Checking compliance
+
+```bash
+# fetch outside services
+grep -rn "fetch(" src --include="*.tsx" | grep -v "src/services"
+
+# zod imported by a component
+grep -rn 'from "zod"' src --include="*.tsx" | grep -v "src/services"
 ```
 
 Both should return nothing.

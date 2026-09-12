@@ -1,3 +1,7 @@
+export { DocPage } from "./DocPage";
+export type { DocBlock, DocEntry } from "./DocPage";
+export { DocsLayout } from "./DocsLayout";
+export type { DocsSection } from "./DocsLayout";
 export { ErrorPage } from "./ErrorPage";
 export { Footer } from "./Footer";
 export { Header } from "./Header";

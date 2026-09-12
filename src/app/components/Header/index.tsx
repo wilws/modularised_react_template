@@ -8,7 +8,11 @@ import style from "./index.module.scss";
  * Navigation lives here, in the app shell. Modules never render their own
  * top-level nav — they only expose routes.
  */
-const navItems = [{ to: "/", labelId: "nav.home", end: true }] as const;
+const navItems = [
+  { to: "/app", labelId: "nav.app" },
+  { to: "/modules", labelId: "nav.modules" },
+  { to: "/services", labelId: "nav.services" },
+] as const;
 
 export const Header = () => {
   const { t } = useTranslation();
@@ -22,13 +26,13 @@ export const Header = () => {
       </Anchor>
 
       <Group component="nav" gap="md" style={{ marginInlineEnd: "auto" }}>
-        {navItems.map(({ to, labelId, end }) => (
+        {navItems.map(({ to, labelId }) => (
           <Anchor
             key={to}
             component={RouterNavLink}
             to={to}
-            end={end}
             size="sm"
+            ff="monospace"
             className={style.navLink}
           >
             {t(labelId)}

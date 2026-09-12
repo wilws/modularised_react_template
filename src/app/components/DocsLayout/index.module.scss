@@ -1,0 +1,44 @@
+.docs {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.sidebar {
+  position: sticky;
+  top: 24px;
+  flex: 0 0 180px;
+
+  @media (max-width: 768px) {
+    position: static;
+    flex: none;
+    width: 100%;
+  }
+}
+
+.link {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: var(--mantine-color-text);
+
+  &:hover {
+    background: var(--mantine-color-default-hover);
+  }
+
+  &:global(.active) {
+    color: var(--mantine-primary-color-filled);
+    background: var(--mantine-primary-color-light);
+  }
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  max-width: 760px;
+}

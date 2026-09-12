@@ -1,0 +1,58 @@
+.tree {
+  padding: 20px 24px;
+  overflow-x: auto;
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 13px;
+  line-height: 1.9;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-default);
+}
+
+.root {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mantine-color-text);
+}
+
+.rootNote {
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--mantine-color-dimmed);
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.glyph {
+  color: var(--mantine-color-dimmed);
+  opacity: 0.55;
+  white-space: pre;
+}
+
+.name {
+  font-weight: 600;
+  color: var(--mantine-primary-color-filled);
+  text-decoration: none;
+}
+
+a.name:hover {
+  text-decoration: underline;
+}
+
+.note {
+  color: var(--mantine-color-dimmed);
+
+  &::before {
+    content: "— ";
+  }
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+}

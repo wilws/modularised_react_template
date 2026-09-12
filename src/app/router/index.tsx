@@ -1,6 +1,9 @@
 import { createBrowserRouter, type RouteObject } from "react-router-dom";
 import { ErrorPage, MainLayout } from "../components";
 import { homeRoutes } from "../../modules/home/router";
+import { appDocsRoutes } from "../../modules/appDocs/router";
+import { modulesDocsRoutes } from "../../modules/modulesDocs/router";
+import { servicesDocsRoutes } from "../../modules/servicesDocs/router";
 
 /**
  * The one place modules plug into the app.
@@ -11,7 +14,9 @@ import { homeRoutes } from "../../modules/home/router";
  */
 const moduleRoutes: RouteObject[] = [
   ...homeRoutes,
-  // ...aboutRoutes,
+  ...appDocsRoutes,
+  ...modulesDocsRoutes,
+  ...servicesDocsRoutes,
 ];
 
 const router = createBrowserRouter([
@@ -22,7 +27,7 @@ const router = createBrowserRouter([
     children: [
       ...moduleRoutes,
       // Catch-all: anything unmatched renders inside the shell.
-      { path: "*", element: <ErrorPage /> },
+      { path: "*", element: <ErrorPage notFound /> },
     ],
   },
 ]);

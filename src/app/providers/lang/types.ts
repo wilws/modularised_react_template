@@ -6,9 +6,25 @@ export const langKeyList = {
   JP: "日本語",
   ZH: "繁體中文",
   CN: "简体中文",
+  KR: "한국어",
+  DE: "Deutsch",
+  FR: "Français",
+  PL: "Polski",
 } as const;
 
 export type LangKey = keyof typeof langKeyList;
+
+/** Flag emoji per language, shown in the switcher. */
+export const langFlagMap: Record<LangKey, string> = {
+  EN: "🇬🇧",
+  JP: "🇯🇵",
+  ZH: "🇭🇰",
+  CN: "🇨🇳",
+  KR: "🇰🇷",
+  DE: "🇩🇪",
+  FR: "🇫🇷",
+  PL: "🇵🇱",
+};
 
 /** BCP-47 tag per language, used for <html lang> and Intl formatting. */
 export const langLocaleMap: Record<LangKey, string> = {
@@ -16,6 +32,10 @@ export const langLocaleMap: Record<LangKey, string> = {
   JP: "ja",
   ZH: "zh-Hant",
   CN: "zh-Hans",
+  KR: "ko",
+  DE: "de",
+  FR: "fr",
+  PL: "pl",
 };
 
 export const LANG_STORAGE_KEY = "app.langKey";
@@ -36,6 +56,10 @@ export const resolveInitialLang = (): LangKey => {
 
   const browser = window.navigator.language.toLowerCase();
   if (browser.startsWith("ja")) return "JP";
+  if (browser.startsWith("ko")) return "KR";
+  if (browser.startsWith("de")) return "DE";
+  if (browser.startsWith("fr")) return "FR";
+  if (browser.startsWith("pl")) return "PL";
   if (browser.startsWith("zh")) {
     return /hant|tw|hk|mo/.test(browser) ? "ZH" : "CN";
   }
