@@ -5,6 +5,9 @@
  */
 export * from "@mantine/core";
 
+// Overrides — declared after the wildcard so they win.
+export { List } from "./List";
+
 /**
  * The single source of every UI primitive in this app.
  *
@@ -17,7 +20,10 @@ export * from "@mantine/core";
  * 1. Create a custom `Button.tsx` in `src/app/components/Basic`.
  * 2. Re-export it below, after the wildcard so it wins:
  *
- *    export * from "@mantine/core";            // export all components
+ *    export * from "@mantine/core";
+
+// Overrides — declared after the wildcard so they win.
+export { List } from "./List";            // export all components
  *    export { MyButton as Button } from "./Button"; // override the default Button
  */
 

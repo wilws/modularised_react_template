@@ -1,106 +1,80 @@
 import { Link } from "react-router-dom";
-import { Box, Text } from "../../../../app/components/Basic";
+import { Box, Text, Tree, getTreeExpandedState, useTree } from "../../../../app/components/Basic";
+import type { TreeNodeData, RenderTreeNodePayload } from "../../../../app/components/Basic";
 import style from "./index.module.scss";
 
-interface TreeNode {
-  name: string;
-  note: string;
-  /** Links the row to its docs page. */
-  to?: string;
-  children?: TreeNode[];
-}
-
-const tree: TreeNode[] = [
+const data: TreeNodeData[] = [
   {
-    name: "app",
-    note: "the core — shell, router, providers",
-    to: "/app",
+    value: "src",
+    label: "src",
     children: [
-      { name: "components", note: "shared chrome + Basic/ primitives" },
-      { name: "locales", note: "translation engine" },
-      { name: "providers", note: "language context" },
-      { name: "router", note: "← the ONLY seam to modules" },
+      {
+        value: "app",
+        label: "app",
+        nodeProps: { note: "the core — shell, router, providers", to: "/app" },
+        children: [
+          { value: "app/components", label: "components", nodeProps: { note: "shared chrome + Basic/ primitives" } },
+          { value: "app/hooks", label: "hooks", nodeProps: { note: "app-wide custom hooks" } },
+          { value: "app/locales", label: "locales", nodeProps: { note: "translation engine" } },
+          { value: "app/providers", label: "providers", nodeProps: { note: "cross-cutting context" } },
+          { value: "app/router", label: "router", nodeProps: { note: "← the ONLY seam to modules" } },
+        ],
+      },
+      {
+        value: "modules",
+        label: "modules",
+        nodeProps: { note: "one folder per page", to: "/modules" },
+        children: [
+          { value: "modules/home", label: "home", nodeProps: { note: "this page" } },
+          { value: "modules/appDocs", label: "appDocs", nodeProps: { note: "the /app docs" } },
+          { value: "modules/modulesDocs", label: "modulesDocs", nodeProps: { note: "the /modules docs" } },
+          { value: "modules/servicesDocs", label: "servicesDocs", nodeProps: { note: "the /services docs" } },
+          { value: "modules/dogDemo", label: "dogDemo", nodeProps: { note: "live API demo", to: "/demo" } },
+        ],
+      },
+      {
+        value: "services",
+        label: "services",
+        nodeProps: { note: "all backend & external calls", to: "/services" },
+        children: [
+          { value: "services/api", label: "api", nodeProps: { note: "one folder per resource" } },
+        ],
+      },
     ],
-  },
-  {
-    name: "modules",
-    note: "one folder per page",
-    to: "/modules",
-    children: [
-      { name: "home", note: "this page" },
-      { name: "appDocs", note: "the /app docs" },
-      { name: "modulesDocs", note: "the /modules docs" },
-      { name: "servicesDocs", note: "the /services docs" },
-    ],
-  },
-  {
-    name: "services",
-    note: "all backend & external calls",
-    to: "/services",
-    children: [{ name: "api", note: "one folder per resource" }],
   },
 ];
 
-/** One row: connector glyph, name, and a short note. */
-const Row = ({
-  node,
-  depth,
-  isLast,
-  parentLast,
-}: {
-  node: TreeNode;
-  depth: number;
-  isLast: boolean;
-  parentLast?: boolean;
-}) => {
-  // Everything sits under `src/`, which is itself the last child of the root.
-  const indent = depth === 0 ? "    " : parentLast ? "        " : "    │   ";
-  const branch = isLast ? "└── " : "├── ";
+/** One row: the folder name (linked where it has a docs page) and its note. */
+const renderNode = ({ node, expanded, hasChildren, elementProps }: RenderTreeNodePayload) => {
+  const note = node.nodeProps?.note as string | undefined;
+  const to = node.nodeProps?.to as string | undefined;
 
   return (
-    <Box className={style.row}>
-      <span className={style.glyph}>
-        {indent}
-        {branch}
-      </span>
-      {node.to ? (
-        <Link to={node.to} className={style.name}>
-          {node.name}/
+    <Box {...elementProps} className={`${elementProps.className} ${style.row}`}>
+      <span className={style.chevron}>{hasChildren ? (expanded ? "▾" : "▸") : ""}</span>
+
+      {to ? (
+        <Link to={to} className={style.name} onClick={(event) => event.stopPropagation()}>
+          {node.label}/
         </Link>
       ) : (
-        <span className={style.name}>{node.name}/</span>
+        <span className={style.name}>{node.label}/</span>
       )}
-      <span className={style.note}>{node.note}</span>
+
+      {note && <span className={style.note}>{note}</span>}
     </Box>
   );
 };
 
-export const StructureTree = () => (
-  <Box className={style.tree}>
-    <Text component="div" className={style.root}>
-      modularised_react_template/
-    </Text>
-    <Box className={style.row}>
-      <span className={style.glyph}>└── </span>
-      <span className={style.name}>src/</span>
-    </Box>
+export const StructureTree = () => {
+  const tree = useTree({ initialExpandedState: getTreeExpandedState(data, "*") });
 
-    {tree.map((node, index) => {
-      const isLastTop = index === tree.length - 1;
-      return (
-        <Box key={node.name}>
-          <Row node={node} depth={0} isLast={isLastTop} />
-          {node.children?.map((child, childIndex) => (
-            <Row
-              key={child.name}
-              node={child}
-              depth={1}
-              isLast={childIndex === node.children!.length - 1}
-              parentLast={isLastTop}
-            />
-          ))}
-        </Box>
-      );
-    })}
-  </Box>
-);
+  return (
+    <Box className={style.wrap}>
+      <Text component="div" className={style.root}>
+        modularised_react_template/
+      </Text>
+      <Tree data={data} tree={tree} levelOffset={26} withLines renderNode={renderNode} />
+    </Box>
+  );
+};

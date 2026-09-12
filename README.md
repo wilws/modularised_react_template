@@ -2,6 +2,13 @@
 
 React 19 + Vite + TypeScript template built on a strict app/module split.
 
+**▶ Live preview: https://modularised-react-template.vercel.app/**
+
+The preview site is itself built with this template — every page you see is a
+module, and the live demo calls a real API through the services layer. Built by
+[Wilson Wong](https://github.com/wilws) ·
+[source](https://github.com/wilws/modularised_react_template).
+
 ## The rule
 
 ```
@@ -16,11 +23,15 @@ src/
 ├── services/             ← ALL backend & external communication
 │   └── api/              one folder per resource, each with its own schemas
 └── modules/              one folder per page
-    └── home/
-        ├── router/       ← the module's ONLY public surface
-        ├── views/        page-level components
-        ├── components/   components private to this module
-        └── locales/      strings private to this module
+    ├── home/
+    │   ├── router/       ← the module's ONLY public surface
+    │   ├── views/        page-level components
+    │   ├── components/   components private to this module
+    │   └── locales/      strings private to this module
+    ├── appDocs/          the /app docs page
+    ├── modulesDocs/      the /modules docs page
+    ├── servicesDocs/     the /services docs page
+    └── dogDemo/          live API demo
 ```
 
 1. **A module owns its views, components, locales and styles.**
@@ -208,7 +219,9 @@ export const api = {
 };
 ```
 
-A third-party resource is the same, with its own base URL and headers.
+A third-party resource is the same, with its own base URL and headers — see
+`src/services/api/dog/`, which calls the public [Dog API](https://dog.ceo/dog-api/breeds-list)
+with no auth at all. The `/demo` page runs it live and shows every file involved.
 
 ### Checking compliance
 
@@ -216,15 +229,26 @@ A third-party resource is the same, with its own base URL and headers.
 # fetch outside services
 grep -rn "fetch(" src --include="*.tsx" | grep -v "src/services"
 
-# zod imported by a component
-grep -rn 'from "zod"' src --include="*.tsx" | grep -v "src/services"
+# a component defining or parsing a schema
+grep -rnE 'z\.(object|array|string|number)\(|\.parse\(' src --include="*.tsx" \
+  | grep -v "src/services"
 ```
 
 Both should return nothing.
 
+Components may `import { z } from "zod"` for one purpose only — narrowing a
+caught error with `err instanceof z.ZodError`, so a schema mismatch can be told
+apart from a network failure. Defining schemas and calling `.parse()` stay in
+`services/`.
+
 ## Languages
 
-Four languages ship: `EN`, `JP` (日本語), `ZH` (繁體中文), `CN` (简体中文).
+Eight languages ship, each with a flag in the switcher:
+
+| | | | |
+|---|---|---|---|
+| 🇬🇧 `EN` English | 🇯🇵 `JP` 日本語 | 🇭🇰 `ZH` 繁體中文 | 🇨🇳 `CN` 简体中文 |
+| 🇰🇷 `KR` 한국어 | 🇩🇪 `DE` Deutsch | 🇫🇷 `FR` Français | 🇵🇱 `PL` Polski |
 
 The active language is stored in `LangProvider`, persisted to `localStorage`, detected from the browser on first visit, and mirrored onto `<html lang>`.
 
@@ -239,7 +263,7 @@ t("nav.home");
 
 ```tsx
 const { t } = useModuleTranslation(homeLocale);
-t("home.counter.value", { count: 42 });   // "{count}" slots interpolate
+t("dog.count", { count: 108 });   // "{count}" slots interpolate
 ```
 
 `defineLocale` makes every language required — a missing translation is a **compile error**, not a runtime fallback. Message ids are inferred from the `EN` entry, so `t()` autocompletes.
@@ -252,8 +276,10 @@ const { formatNumber, formatDate } = useFormatters();
 
 ### Adding a language
 
-1. Add the key to `langKeyList` and `langLocaleMap` in `src/app/providers/lang/types.ts`.
+1. Add the key to `langKeyList`, `langLocaleMap` and `langFlagMap` in `src/app/providers/lang/types.ts`.
 2. TypeScript will now error on every locale bundle until the new language is filled in.
+
+That second step is the point: a missing translation cannot ship silently.
 
 ## Commands
 
@@ -262,4 +288,46 @@ npm install
 npm run dev      # dev server
 npm run build    # typecheck + production build
 npm run lint     # eslint
+npm run test     # vitest (service tests)
+npm run preview  # serve the production build
+```
+
+## Testing
+
+Services are plain async functions, so they test without React and without a
+running app. Each test sits beside the service it covers:
+
+```
+src/services/api/dog/
+├── index.ts        the service
+├── index.test.ts   ← its test
+├── schema.ts
+└── types.ts
+```
+
+Cover the happy path, the request that was sent, an invalid payload (which must
+reject *before* `fetch` is called), a malformed response (which must throw a
+`ZodError` rather than leak), a non-2xx status, and a network failure.
+
+Because a service is just a function, the same test can run against the real
+API by dropping the `fetch` stub — turning the suite into a contract check that
+fails when the backend changes shape. See `/services/testing` in the app.
+
+## Deploying
+
+The app uses `createBrowserRouter`, so the host must rewrite every path to
+`index.html` — otherwise `/app` and other deep links 404 on a hard refresh.
+
+[`vercel.json`](vercel.json) does this for Vercel:
+
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+```
+
+Netlify equivalent, in `public/_redirects`:
+
+```
+/*  /index.html  200
 ```

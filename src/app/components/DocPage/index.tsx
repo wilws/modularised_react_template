@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
-import { Code, Divider, List, Paper, Stack, Text, Title } from "../Basic";
+import { Box, List, Stack, Text, Title } from "../Basic";
+import { CodeBlock } from "../CodeBlock";
+import style from "./index.module.scss";
 
 /** One documentation page, described as data. */
 export interface DocEntry {
@@ -27,37 +29,53 @@ interface DocPageProps {
 }
 
 /**
+ * A sample whose first line is a `/* path *\/` comment shows that path as the
+ * block's caption instead of repeating it inside the code.
+ */
+const CodeSample = ({ code }: { code: string }) => {
+  // Only a real file path is lifted — a commented note like "✅ do this"
+  // stays in the code where it belongs.
+  const match = code.match(/^\/\* (src\/[\w./<>-]+) \*\/\n/);
+  return match ? (
+    <CodeBlock path={match[1]}>{code.slice(match[0].length)}</CodeBlock>
+  ) : (
+    <CodeBlock>{code}</CodeBlock>
+  );
+};
+
+/**
  * Renders one documentation page from plain data, so a docs module only has
  * to describe its content — never lay it out.
  */
 export const DocPage = ({ title, path, intro, blocks, children }: DocPageProps) => (
-  <Stack gap="lg">
-    <Stack gap={6}>
-      <Code>{path}</Code>
-      <Title order={1} size="h2">
+  <Stack gap={40}>
+    <Stack gap={10}>
+      <Box className={style.path}>{path}</Box>
+      <Title order={1} className={style.title}>
         {title}
       </Title>
-      <Text c="dimmed">{intro}</Text>
+      <Text className={style.intro}>{intro}</Text>
     </Stack>
 
-    <Divider />
-
     {blocks.map((block, index) => (
-      <Stack key={block.heading ?? index} gap="xs">
-        {block.heading && <Title order={2} size="h4">{block.heading}</Title>}
-        {block.body && <Text>{block.body}</Text>}
+      <Stack key={block.heading ?? index} gap={12}>
+        {block.heading && (
+          <Title order={2} className={style.heading}>
+            {block.heading}
+          </Title>
+        )}
+
+        {block.body && <Text className={style.body}>{block.body}</Text>}
+
         {block.bullets && (
-          <List spacing={4} size="sm">
+          <List className={style.bullets}>
             {block.bullets.map((item) => (
               <List.Item key={item}>{item}</List.Item>
             ))}
           </List>
         )}
-        {block.code && (
-          <Paper withBorder radius="sm" p={0}>
-            <Code block>{block.code}</Code>
-          </Paper>
-        )}
+
+        {block.code && <CodeSample code={block.code} />}
       </Stack>
     ))}
 

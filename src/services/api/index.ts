@@ -1,6 +1,7 @@
 /* ************************************
  * ------------- API ------------------
  * ************************************/
+import * as dogs from "./dog";
 import * as users from "./user";
 
 /**
@@ -11,7 +12,8 @@ import * as users from "./user";
  */
 export const api = {
   users,
-  // orders,
+  dogs,
 };
 
 export type { User } from "./user";
+export type { Dog } from "./dog";

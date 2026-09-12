@@ -1,6 +1,6 @@
 .docs {
   display: flex;
-  gap: 32px;
+  gap: 40px;
   align-items: flex-start;
 
   @media (max-width: 768px) {
@@ -12,7 +12,11 @@
 .sidebar {
   position: sticky;
   top: 24px;
-  flex: 0 0 180px;
+  flex: 0 0 210px;
+  padding: 14px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-body);
 
   @media (max-width: 768px) {
     position: static;
@@ -21,20 +25,66 @@
   }
 }
 
-.link {
+.title {
+  padding: 0 10px 10px;
+  font-family: var(--mantine-font-family-monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mantine-color-dimmed);
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.link.link {
+  position: relative;
   display: block;
-  padding: 6px 10px;
-  border-radius: 6px;
-  color: var(--mantine-color-text);
+  padding: 7px 12px;
+  font-size: 13.5px;
+  color: var(--mantine-color-dimmed);
+  border-radius: var(--mantine-radius-sm);
+  transition: background 120ms ease, color 120ms ease;
+
+  /* the accent bar that slides in on the active row */
+  &::before {
+    position: absolute;
+    inset-block: 6px;
+    inset-inline-start: 0;
+    width: 2px;
+    content: "";
+    background: var(--mantine-primary-color-filled);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
 
   &:hover {
+    color: var(--mantine-color-text);
     background: var(--mantine-color-default-hover);
   }
 
   &:global(.active) {
+    font-weight: 600;
     color: var(--mantine-primary-color-filled);
     background: var(--mantine-primary-color-light);
+
+    &::before {
+      opacity: 1;
+    }
   }
+}
+
+/* Sub-items are indented under the section above them. Doubling the class
+   raises specificity above .link's padding shorthand and above Mantine's
+   own Anchor classes, so the indent always wins. */
+.nested.nested {
+  margin-inline-start: 18px;
+  padding-block: 6px;
+  padding-inline: 12px 12px;
+  font-size: 12.5px;
+  border-inline-start: 2px solid var(--mantine-color-default-border);
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
 }
 
 .content {

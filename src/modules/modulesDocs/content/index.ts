@@ -14,7 +14,9 @@ export const modulesDocs: DocEntry[] = [
           "router/ — the module's ONLY public surface",
           "views/ — page-level components",
           "components/ — components private to this module",
+          "hooks/ — custom hooks private to this module",
           "locales/ — strings private to this module",
+          "content/ — static data the views render",
         ],
       },
       {
@@ -114,6 +116,62 @@ export const homeRoutes: RouteObject[] = [
         heading: "Used only inside the module",
         code: `const { t } = useModuleTranslation(homeLocale);
 t("home.hero.title");`,
+      },
+    ],
+  },
+  {
+    slug: "hooks",
+    title: "hooks",
+    path: "src/modules/<name>/hooks/",
+    intro:
+      "Custom hooks belonging to one module. Anything stateful a view repeats — a form, a filter, a data load — becomes a hook here rather than a global one.",
+    blocks: [
+      {
+        heading: "Why module-scoped",
+        body: "A hook that only this feature calls has no reason to be globally shareable. Keeping it beside its caller means it is deleted with the feature, and changing it can only affect this module.",
+        code: `src/modules/dogDemo/
+├── views/DogDemo/        the page
+├── components/BreedList/ private components
+└── hooks/useBreeds.ts    ← private hook, used only here`,
+      },
+      {
+        heading: "Example",
+        body: "The demo view holds loading and error state inline. Pulling it into a module hook leaves the view with nothing but rendering.",
+        code: `/* src/modules/dogDemo/hooks/useBreeds.ts */
+import { useState } from "react";
+import { api, type Dog } from "../../../services/api";
+
+export const useBreeds = () => {
+  const [breeds, setBreeds] = useState<Dog.IBreed[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setBreeds(await api.dogs.listBreeds());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { breeds, loading, error, load };
+};`,
+      },
+      {
+        heading: "The view becomes trivial",
+        code: `const { breeds, loading, error, load } = useBreeds();
+
+<Button onClick={load} loading={loading}>{t("dog.button")}</Button>
+{error && <Alert color="red">{error}</Alert>}
+{breeds.length > 0 && <BreedList breeds={breeds} />}`,
+      },
+      {
+        heading: "When to promote it to app/hooks",
+        body: "Only when an unrelated module needs the same hook. A generic useAsync belongs in app/hooks; useBreeds never will.",
       },
     ],
   },

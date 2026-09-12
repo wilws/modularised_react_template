@@ -12,6 +12,7 @@ const navItems = [
   { to: "/app", labelId: "nav.app" },
   { to: "/modules", labelId: "nav.modules" },
   { to: "/services", labelId: "nav.services" },
+  { to: "/demo", labelId: "nav.demo" },
 ] as const;
 
 export const Header = () => {

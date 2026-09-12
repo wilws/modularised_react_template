@@ -4,6 +4,7 @@ import { homeRoutes } from "../../modules/home/router";
 import { appDocsRoutes } from "../../modules/appDocs/router";
 import { modulesDocsRoutes } from "../../modules/modulesDocs/router";
 import { servicesDocsRoutes } from "../../modules/servicesDocs/router";
+import { dogDemoRoutes } from "../../modules/dogDemo/router";
 
 /**
  * The one place modules plug into the app.
@@ -17,6 +18,7 @@ const moduleRoutes: RouteObject[] = [
   ...appDocsRoutes,
   ...modulesDocsRoutes,
   ...servicesDocsRoutes,
+  ...dogDemoRoutes,
 ];
 
 const router = createBrowserRouter([

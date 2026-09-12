@@ -1,3 +1,4 @@
+export { CodeBlock } from "./CodeBlock";
 export { DocPage } from "./DocPage";
 export type { DocBlock, DocEntry } from "./DocPage";
 export { DocsLayout } from "./DocsLayout";

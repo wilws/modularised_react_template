@@ -17,7 +17,9 @@ export const appDocsRoutes: RouteObject[] = [
         title="app"
         sections={appDocs.map(({ slug }) => ({
           to: slug ? `/app/${slug}` : "/app",
-          label: slug || "overview",
+          // "components/basic" renders as an indented "basic" under "components"
+          label: slug ? (slug.split("/")[1] ?? slug) : "overview",
+          nested: slug.includes("/"),
         }))}
       />
     ),

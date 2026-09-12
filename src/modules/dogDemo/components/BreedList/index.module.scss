@@ -1,0 +1,16 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+  max-height: 420px;
+  padding: 4px;
+  overflow-y: auto;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+}
+
+.item {
+  padding: 8px 10px;
+  border-radius: var(--mantine-radius-sm);
+  background: var(--mantine-color-default);
+}

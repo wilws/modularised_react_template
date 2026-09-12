@@ -1,11 +1,13 @@
 import { NavLink as RouterNavLink, Outlet } from "react-router-dom";
-import { Anchor, Box, Stack, Text } from "../Basic";
+import { Anchor, Box, Stack } from "../Basic";
 import style from "./index.module.scss";
 
 export interface DocsSection {
   /** Route segment, relative to the module's base path. */
   to: string;
   label: string;
+  /** Renders indented under the section above it. */
+  nested?: boolean;
 }
 
 interface DocsLayoutProps {
@@ -20,20 +22,17 @@ interface DocsLayoutProps {
 export const DocsLayout = ({ title, sections }: DocsLayoutProps) => (
   <Box className={style.docs}>
     <Box component="aside" className={style.sidebar}>
-      <Text size="xs" fw={700} tt="uppercase" c="dimmed" mb="xs">
-        {title}
-      </Text>
-      <Stack gap={2}>
-        {sections.map(({ to, label }) => (
+      <Box className={style.title}>{title}/</Box>
+
+      <Stack gap={2} mt={8}>
+        {sections.map(({ to, label, nested }) => (
           <Anchor
             key={to}
             component={RouterNavLink}
             to={to}
             end
-            size="sm"
-            ff="monospace"
             underline="never"
-            className={style.link}
+            className={nested ? `${style.link} ${style.nested}` : style.link}
           >
             {label}
           </Anchor>

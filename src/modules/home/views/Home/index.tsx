@@ -15,13 +15,14 @@ import { useModuleTranslation } from "../../../../app/locales";
 import { AUTHOR_NAME, AUTHOR_URL, REPO_URL } from "../../../../app/config";
 import { StructureTree } from "../../components/StructureTree";
 import { homeLocale } from "../../locales";
+import style from "./index.module.scss";
 
 const rules = [
-  "home.rules.one",
-  "home.rules.two",
-  "home.rules.three",
-  "home.rules.four",
-  "home.rules.five",
+  { id: "home.rules.one", why: "home.rules.one.why" },
+  { id: "home.rules.two", why: "home.rules.two.why" },
+  { id: "home.rules.three", why: "home.rules.three.why" },
+  { id: "home.rules.four", why: "home.rules.four.why" },
+  { id: "home.rules.five", why: "home.rules.five.why" },
 ] as const;
 
 export const Home = () => {
@@ -58,9 +59,16 @@ export const Home = () => {
 
       <Stack gap="xs">
         <Title order={2}>{t("home.rules.title")}</Title>
-        <List spacing="xs" type="ordered">
-          {rules.map((id) => (
-            <List.Item key={id}>{t(id)}</List.Item>
+        <List type="ordered" className={style.rules}>
+          {rules.map(({ id, why }) => (
+            <List.Item key={id}>
+              <Text component="span" fw={500}>
+                {t(id)}
+              </Text>
+              <Text size="sm" c="dimmed">
+                {t(why)}
+              </Text>
+            </List.Item>
           ))}
         </List>
       </Stack>
@@ -87,6 +95,9 @@ export const Home = () => {
           </Button>
           <Button component={Link} to="/services" variant="default" ff="monospace">
             services
+          </Button>
+          <Button component={Link} to="/demo" variant="light" ff="monospace">
+            demo
           </Button>
         </Group>
       </Stack>
